@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 220 9.1% 95.9%;
+    --primary-foreground: 220.9 39.3% 11%;
+    --secondary: 220 9.1% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 9.1% 95.9%;
+    --muted-foreground: 220 8.9% 43.1%;
+    --accent: 220 9.1% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
+    --radius: 0.5rem;
+
+    --invalid-bg: 15 52% 95%;
+    --invalid-fg: 15 70% 40%;
+    --null-bg: 225 52% 95%;
+    --null-fg: 225 70% 40%;
+    --row-hover: 220 9.1% 95.9%;
+    --invalid-date-bg: 30 52% 95%;
+    --invalid-date-fg: 30 70% 40%;
+  }
+
+  .dark {
+    --background: 240 2% 12%; /* eerie-black-2 #1d1d1e */
+    --foreground: 0 0% 90%; /* near-white */
+    --card: 240 2% 8%; /* darker card */
+    --card-foreground: 0 0% 90%;
+    --popover: 240 2% 8%;
+    --popover-foreground: 0 0% 90%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 15%; /* slightly lighter secondary */
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 56%; /* battleship-gray #8f8f8f */
+    --accent: 0 0% 22%; /* lighter accent for hover */
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 0 0% 20%; /* subtle border */
+    --input: 0 0% 15%;
+    --ring: 0 0% 56%;
+
+    --invalid-bg: 270 30% 20%;
+    --invalid-fg: 270 80% 85%;
+    --null-bg: 220 40% 20%;
+    --null-fg: 220 80% 85%;
+    --row-hover: 0 0% 15%;
+    --invalid-date-bg: 30 50% 20%;
+    --invalid-date-fg: 30 90% 75%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .sql-keyword {
+    @apply font-semibold text-blue-600 dark:text-sky-400;
+  }
+  .sql-string {
+    @apply text-green-700 dark:text-emerald-400;
+  }
+  .sql-number {
+    @apply text-red-600 dark:text-orange-400;
+  }
+  .sql-schema {
+    @apply text-teal-600 dark:text-sky-300;
+  }
+  .ai-avatar-logo {
+    width: 1.25rem; /* w-5 */
+    height: 1.25rem; /* h-5 */
+    background-color: hsl(var(--card-foreground));
+    -webkit-mask-image: url("/logo.png");
+    mask-image: url("/logo.png");
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+}
+
+@layer utilities {
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+}
