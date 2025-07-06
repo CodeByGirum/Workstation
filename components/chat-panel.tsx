@@ -35,7 +35,7 @@ const SQLSyntaxHighlight = ({ code }: { code: string }) => {
 
   return (
     <pre
-      className="p-4 text-sm whitespace-pre-wrap break-all font-medium bg-white dark:bg-[rgba(0,0,0,0.5375)] text-gray-800 dark:text-[rgba(197,253,243,1)]"
+      className="p-4 text-sm whitespace-pre-wrap break-all font-medium bg-secondary text-secondary-foreground"
       dangerouslySetInnerHTML={{ __html: highlight(code) }}
     />
   )
@@ -53,20 +53,20 @@ const CollapsibleCodeBlock = ({ title, code }: { title: string; code: string }) 
   }
 
   return (
-    <div className="mt-4 rounded-lg bg-gray-50 dark:bg-[#1E1F22] border border-gray-200 dark:border-border/50 overflow-hidden font-mono">
-      <div className="flex justify-between p-2 bg-gray-100 dark:bg-white/[.03] flex-row items-start">
-        <span className="text-sm text-gray-600 dark:text-muted-foreground font-sans px-2">{title}</span>
+    <div className="mt-4 rounded-lg bg-background border border-border/50 overflow-hidden font-mono">
+      <div className="flex justify-between p-2 bg-secondary/50 flex-row items-start">
+        <span className="text-sm text-muted-foreground font-sans px-2">{title}</span>
         <div className="flex items-center gap-1">
           <button
             onClick={handleCopy}
-            className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
+            className="p-1.5 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
             title="Copy SQL"
           >
             {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
           </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
+            className="p-1.5 rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
             title={isOpen ? "Collapse" : "Expand"}
           >
             <ChevronUp
@@ -98,7 +98,7 @@ export function ChatPanel({
   onClose,
   style,
   className,
-  messages = [], // Added default value for robustness
+  messages = [],
   isThinking,
   onSendMessage,
 }: ChatPanelProps) {
@@ -111,7 +111,7 @@ export function ChatPanel({
   return (
     <aside
       style={style}
-      className={`bg-card text-card-foreground flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-in-out ${className}`}
+      className={`bg-card text-card-foreground flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-in-out shadow-sm ${className}`}
     >
       <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <h2 className="font-semibold">Chat</h2>
