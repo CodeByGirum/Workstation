@@ -34,10 +34,10 @@ export default function DataCleaningWorkstation() {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false) // For mobile drawer
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false) // For mobile drawer
   const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false)
-  const [isSidebarPinned, setIsSidebarPinned] = useState(true) // New state to manage user interaction
+  const [isSidebarPinned, setIsSidebarPinned] = useState(true) // Start pinned and expanded
   const [chatPanelSide, setChatPanelSide] = useState<"left" | "right">("right")
 
-  const initialLoad = useRef(true)
+  const collapseTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Lifted state for chat
   const [messages, setMessages] = useState<Message[]>(initialMessages)
@@ -67,24 +67,45 @@ export default function DataCleaningWorkstation() {
 
   // Auto-collapse on initial load
   useEffect(() => {
-    if (initialLoad.current) {
-      const timer = setTimeout(() => {
-        setIsLeftSidebarCollapsed(true)
-        setIsSidebarPinned(false)
-        initialLoad.current = false
-      }, 3000)
+    const timer = setTimeout(() => {
+      setIsLeftSidebarCollapsed(true)
+      setIsSidebarPinned(false)
+    }, 3000)
 
-      return () => clearTimeout(timer)
-    }
+    return () => clearTimeout(timer)
   }, [])
 
+  const clearCollapseTimer = () => {
+    if (collapseTimerRef.current) {
+      clearTimeout(collapseTimerRef.current)
+      collapseTimerRef.current = null
+    }
+  }
+
+  const handleMouseEnterSidebarArea = () => {
+    clearCollapseTimer()
+    if (!isSidebarPinned) {
+      setIsLeftSidebarCollapsed(false)
+    }
+  }
+
+  const handleMouseLeaveSidebarArea = () => {
+    if (!isSidebarPinned) {
+      collapseTimerRef.current = setTimeout(() => {
+        setIsLeftSidebarCollapsed(true)
+      }, 3000)
+    }
+  }
+
   const handlePinSidebar = () => {
+    clearCollapseTimer()
     resetLeftSidebarWidth()
     setIsLeftSidebarCollapsed(false)
     setIsSidebarPinned(true)
   }
 
   const handleUnpinSidebar = () => {
+    clearCollapseTimer()
     setIsLeftSidebarCollapsed(true)
     setIsSidebarPinned(false)
   }
@@ -134,18 +155,12 @@ export default function DataCleaningWorkstation() {
           onSendMessage={handleSendMessage}
         />
         <div className="flex flex-grow overflow-hidden relative">
-          {/* Left Sidebar Container with hover logic */}
-          <div
-            className="hidden lg:flex h-full"
-            onMouseLeave={() => {
-              if (!isSidebarPinned) {
-                setIsLeftSidebarCollapsed(true)
-              }
-            }}
-          >
+          {/* Left Sidebar Container */}
+          <div className="hidden lg:flex h-full" onMouseLeave={handleMouseLeaveSidebarArea}>
             <div
               className="transition-all duration-300 ease-in-out flex-shrink-0 h-full"
               style={{ width: isLeftSidebarCollapsed ? 0 : leftSidebarWidth, overflow: "hidden" }}
+              onMouseEnter={handleMouseEnterSidebarArea}
             >
               <LeftSidebar
                 isCollapsed={isLeftSidebarCollapsed}
@@ -160,11 +175,7 @@ export default function DataCleaningWorkstation() {
           {isLeftSidebarCollapsed && (
             <>
               <div
-                onMouseEnter={() => {
-                  if (!isSidebarPinned) {
-                    setIsLeftSidebarCollapsed(false)
-                  }
-                }}
+                onMouseEnter={handleMouseEnterSidebarArea}
                 className="hidden lg:block fixed left-0 top-0 h-full w-3 z-30"
               />
               <button
