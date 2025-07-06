@@ -5,33 +5,33 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --foreground: 240 5.9% 10%;
+    --card: 240 5% 96.1%;
+    --card-foreground: 240 5.9% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 220 9.1% 95.9%;
-    --primary-foreground: 220.9 39.3% 11%;
-    --secondary: 220 9.1% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 9.1% 95.9%;
-    --muted-foreground: 220 8.9% 43.1%;
-    --accent: 220 9.1% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --popover-foreground: 240 5.9% 10%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.7% 46.1%;
+    --accent: 240 5% 93%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
     --radius: 0.5rem;
 
-    --invalid-bg: 15 52% 95%;
-    --invalid-fg: 15 70% 40%;
-    --null-bg: 225 52% 95%;
-    --null-fg: 225 70% 40%;
-    --row-hover: 220 9.1% 95.9%;
-    --invalid-date-bg: 30 52% 95%;
-    --invalid-date-fg: 30 70% 40%;
+    --invalid-bg: 240 5% 90%;
+    --invalid-fg: 240 5% 20%;
+    --null-bg: 240 5% 92%;
+    --null-fg: 240 5% 30%;
+    --row-hover: 240 5% 93%;
+    --invalid-date-bg: 240 5% 90%;
+    --invalid-date-fg: 240 5% 20%;
   }
 
   .dark {
