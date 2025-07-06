@@ -40,7 +40,7 @@ export function WorkstationHeader({
   onSendMessage,
 }: WorkstationHeaderProps) {
   return (
-    <header className="flex items-center justify-between h-14 px-4 border-b bg-card text-card-foreground flex-shrink-0 shadow-sm">
+    <header className="flex items-center justify-between h-14 px-4 border-b bg-card text-card-foreground flex-shrink-0">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleLeftSidebar}

@@ -25,8 +25,8 @@ type ChatInputProps = {
 
 const SendIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 5V19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M6 11L12 5L18 11" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M12 5V19" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M6 11L12 5L18 11" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 )
 
@@ -90,7 +90,7 @@ export function ChatInput({ onSendMessage, isThinking }: ChatInputProps) {
 
   return (
     <div className="p-2">
-      <div className="relative p-3 shadow-sm border focus-within:border-ring/50 transition-colors bg-background text-muted-foreground border-border py-4 my-0 rounded-lg">
+      <div className="relative p-3 shadow-sm border focus-within:border-ring/50 transition-colors bg-transparent text-neutral-400 border-neutral-800 py-4 my-0 rounded-lg">
         <textarea
           ref={textareaRef}
           placeholder={mode === "ask" ? "Ask the data assistant..." : "Describe the action to perform..."}
@@ -100,7 +100,7 @@ export function ChatInput({ onSendMessage, isThinking }: ChatInputProps) {
           disabled={isThinking}
           rows={1}
           maxLength={maxChars}
-          className="w-full bg-transparent focus:outline-none resize-none pr-16 text-sm placeholder:text-muted-foreground text-foreground"
+          className="w-full bg-transparent focus:outline-none resize-none pr-16 text-sm placeholder:text-muted-foreground"
           style={{ maxHeight: "200px", overflowY: "auto" }}
         />
 
@@ -108,7 +108,7 @@ export function ChatInput({ onSendMessage, isThinking }: ChatInputProps) {
           <button
             onClick={handleSubmit}
             disabled={!inputValue.trim() || isThinking}
-            className="w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-lg shadow-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-8 h-8 flex items-center justify-center dark:bg-white rounded-lg shadow-md hover:bg-gray-200 dark:hover:bg-gray-200 disabled:bg-gray-100 dark:disabled:bg-neutral-800 disabled:cursor-not-allowed disabled:text-gray-400 dark:disabled:text-neutral-600 transition-all bg-transparent"
             aria-label="Send message"
           >
             <SendIcon />
@@ -120,7 +120,7 @@ export function ChatInput({ onSendMessage, isThinking }: ChatInputProps) {
             <div className="relative" ref={modelSelectorRef}>
               <button
                 onClick={() => setIsModelSelectorOpen(!isModelSelectorOpen)}
-                className="flex items-center gap-1.5 px-2 py-1 text-xs bg-secondary hover:bg-accent rounded-md transition-colors"
+                className="flex items-center gap-1.5 px-2 py-1 text-xs bg-background/50 hover:bg-accent rounded-md transition-colors"
               >
                 <selectedModel.icon size={14} />
                 {selectedModel.name}
@@ -146,7 +146,7 @@ export function ChatInput({ onSendMessage, isThinking }: ChatInputProps) {
             </div>
             <button
               onClick={() => setMode(mode === "ask" ? "action" : "ask")}
-              className="flex items-center gap-1.5 px-2 py-1 text-xs bg-secondary hover:bg-accent rounded-md transition-colors"
+              className="flex items-center gap-1.5 px-2 py-1 text-xs bg-background/50 hover:bg-accent rounded-md transition-colors"
               title={mode === "ask" ? "Switch to Action Mode" : "Switch to Ask Mode"}
             >
               {mode === "ask" ? <HelpCircle size={14} /> : <Zap size={14} />}

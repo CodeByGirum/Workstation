@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { WorkstationHeader } from "@/components/workstation-header"
 import { LeftSidebar } from "@/components/left-sidebar"
 import { MainPanel } from "@/components/main-panel"
@@ -31,10 +31,13 @@ const initialMessages: Message[] = [
 ]
 
 export default function DataCleaningWorkstation() {
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false)
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false)
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false) // For mobile drawer
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false) // For mobile drawer
   const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false)
+  const [isSidebarPinned, setIsSidebarPinned] = useState(true) // New state to manage user interaction
   const [chatPanelSide, setChatPanelSide] = useState<"left" | "right">("right")
+
+  const initialLoad = useRef(true)
 
   // Lifted state for chat
   const [messages, setMessages] = useState<Message[]>(initialMessages)
@@ -49,7 +52,10 @@ export default function DataCleaningWorkstation() {
     minSize: 200,
     maxSize: 400,
     collapseThreshold: 150,
-    onCollapse: () => setIsLeftSidebarCollapsed(true),
+    onCollapse: () => {
+      setIsLeftSidebarCollapsed(true)
+      setIsSidebarPinned(false)
+    },
     side: "left",
   })
 
@@ -59,12 +65,30 @@ export default function DataCleaningWorkstation() {
     side: chatPanelSide,
   })
 
-  const handleExpandSidebar = () => {
+  // Auto-collapse on initial load
+  useEffect(() => {
+    if (initialLoad.current) {
+      const timer = setTimeout(() => {
+        setIsLeftSidebarCollapsed(true)
+        setIsSidebarPinned(false)
+        initialLoad.current = false
+      }, 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handlePinSidebar = () => {
     resetLeftSidebarWidth()
     setIsLeftSidebarCollapsed(false)
+    setIsSidebarPinned(true)
   }
 
-  // Lifted message handler with corrected state updates
+  const handleUnpinSidebar = () => {
+    setIsLeftSidebarCollapsed(true)
+    setIsSidebarPinned(false)
+  }
+
   const handleSendMessage = (message: string, mode: "ask" | "action", model: string) => {
     if (message.trim() === "" || isThinking) return
 
@@ -76,7 +100,6 @@ export default function DataCleaningWorkstation() {
       model,
     }
 
-    // Use functional updates to avoid issues with stale state
     setMessages((prevMessages) => [...prevMessages.filter((m) => !m.centered), newUserMessage])
     setIsThinking(true)
 
@@ -89,7 +112,6 @@ export default function DataCleaningWorkstation() {
           text: `Using ${model} in Action mode: I'm executing the following task: "${message}".`,
         }
       } else {
-        // Ask mode
         botReply = {
           id: Date.now() + 1,
           sender: "ai",
@@ -112,31 +134,47 @@ export default function DataCleaningWorkstation() {
           onSendMessage={handleSendMessage}
         />
         <div className="flex flex-grow overflow-hidden relative">
-          {/* Left Sidebar */}
-          <div className="hidden lg:flex h-full">
+          {/* Left Sidebar Container with hover logic */}
+          <div
+            className="hidden lg:flex h-full"
+            onMouseLeave={() => {
+              if (!isSidebarPinned) {
+                setIsLeftSidebarCollapsed(true)
+              }
+            }}
+          >
             <div
-              className="transition-all duration-500 ease-in-out flex-shrink-0 h-full"
-              style={{ width: isLeftSidebarCollapsed ? 0 : leftSidebarWidth }}
+              className="transition-all duration-300 ease-in-out flex-shrink-0 h-full"
+              style={{ width: isLeftSidebarCollapsed ? 0 : leftSidebarWidth, overflow: "hidden" }}
             >
-              <div className="overflow-hidden h-full" style={{ width: leftSidebarWidth }}>
-                <LeftSidebar
-                  isCollapsed={isLeftSidebarCollapsed}
-                  onToggleCollapse={() => setIsLeftSidebarCollapsed(true)}
-                />
-              </div>
+              <LeftSidebar
+                isCollapsed={isLeftSidebarCollapsed}
+                onToggleCollapse={handleUnpinSidebar}
+                style={{ width: leftSidebarWidth }}
+              />
             </div>
             {!isLeftSidebarCollapsed && <ResizeHandle onMouseDown={handleLeftResize} />}
           </div>
+
+          {/* Sidebar hover trigger area */}
           {isLeftSidebarCollapsed && (
-            <div className="hidden lg:block">
+            <>
+              <div
+                onMouseEnter={() => {
+                  if (!isSidebarPinned) {
+                    setIsLeftSidebarCollapsed(false)
+                  }
+                }}
+                className="hidden lg:block fixed left-0 top-0 h-full w-3 z-30"
+              />
               <button
-                onClick={handleExpandSidebar}
+                onClick={handlePinSidebar}
                 className="fixed z-20 left-2 top-1/2 -translate-y-1/2 bg-card border p-1 rounded-md shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
-                title="Expand sidebar"
+                title="Expand and pin sidebar"
               >
                 <ChevronRight size={16} />
               </button>
-            </div>
+            </>
           )}
 
           {/* Chat Panel on Left */}

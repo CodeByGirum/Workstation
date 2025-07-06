@@ -55,7 +55,7 @@ export function LeftSidebar({ isCollapsed, onToggleCollapse, onClose, style }: L
   return (
     <aside
       style={style}
-      className={`bg-card text-card-foreground flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out h-full shadow-sm`}
+      className={`bg-card text-card-foreground flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out h-full`}
     >
       {/* Header Section */}
       <div className="flex items-start justify-between p-4 border-b">
