@@ -5,6 +5,7 @@ import { useRef, useEffect, useState } from "react"
 import { Copy, ChevronUp, X, PanelLeft, PanelRight, RefreshCw, ThumbsUp, ThumbsDown, Check } from "lucide-react"
 import { ChatInput } from "./chat-input"
 import type { Message } from "@/app/page"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 const AiAvatar = () => (
   <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-card border">
@@ -57,23 +58,39 @@ const CollapsibleCodeBlock = ({ title, code }: { title: string; code: string }) 
       <div className="flex justify-between p-2 bg-gray-100 dark:bg-white/[.03] flex-row items-start">
         <span className="text-sm text-gray-600 dark:text-muted-foreground font-sans px-2">{title}</span>
         <div className="flex items-center gap-1">
-          <button
-            onClick={handleCopy}
-            className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
-            title="Copy SQL"
-          >
-            {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-          </button>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
-            title={isOpen ? "Collapse" : "Expand"}
-          >
-            <ChevronUp
-              size={14}
-              className={`transform transition-transform duration-200 ${!isOpen ? "-rotate-180" : ""}`}
-            />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
+                >
+                  {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>Copy SQL</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="p-1.5 rounded-md text-gray-500 dark:text-muted-foreground hover:bg-gray-200 dark:hover:bg-accent hover:text-gray-800 dark:hover:text-foreground"
+                >
+                  <ChevronUp
+                    size={14}
+                    className={`transform transition-transform duration-200 ${!isOpen ? "-rotate-180" : ""}`}
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>{isOpen ? "Collapse" : "Expand"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       {isOpen && <SQLSyntaxHighlight code={code} />}
@@ -116,17 +133,31 @@ export function ChatPanel({
       <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
         <h2 className="font-semibold">Chat</h2>
         <div className="flex items-center gap-2 text-muted-foreground">
-          <button
-            onClick={onToggleSide}
-            className="p-1 rounded-md hover:bg-accent"
-            title={side === "right" ? "Dock to left" : "Dock to right"}
-          >
-            {side === "right" ? <PanelLeft size={16} /> : <PanelRight size={16} />}
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button onClick={onToggleSide} className="p-1 rounded-md hover:bg-accent">
+                  {side === "right" ? <PanelLeft size={16} /> : <PanelRight size={16} />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>{side === "right" ? "Dock to left" : "Dock to right"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {onClose && (
-            <button onClick={onClose} className="xl:hidden p-1 rounded-md hover:bg-accent">
-              <X size={18} />
-            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button onClick={onClose} className="xl:hidden p-1 rounded-md hover:bg-accent">
+                    <X size={18} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs px-2 py-1">
+                  <p>Close chat</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
       </div>
@@ -141,30 +172,54 @@ export function ChatPanel({
               {msg.sql && msg.sqlTitle && <CollapsibleCodeBlock title={msg.sqlTitle} code={msg.sql} />}
               {msg.sender === "ai" && !msg.centered && (
                 <div className="flex items-center gap-2 mt-2 text-muted-foreground">
-                  <button
-                    className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90"
-                    title="Copy"
-                  >
-                    <Copy size={14} />
-                  </button>
-                  <button
-                    className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90"
-                    title="Rerun"
-                  >
-                    <RefreshCw size={14} />
-                  </button>
-                  <button
-                    className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90"
-                    title="Upvote"
-                  >
-                    <ThumbsUp size={14} />
-                  </button>
-                  <button
-                    className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90"
-                    title="Downvote"
-                  >
-                    <ThumbsDown size={14} />
-                  </button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90">
+                          <Copy size={14} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-xs px-2 py-1">
+                        <p>Copy response</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90">
+                          <RefreshCw size={14} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-xs px-2 py-1">
+                        <p>Rerun prompt</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90">
+                          <ThumbsUp size={14} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-xs px-2 py-1">
+                        <p>Good response</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="p-1 rounded-md hover:bg-accent hover:text-foreground transition-all active:scale-90">
+                          <ThumbsDown size={14} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-xs px-2 py-1">
+                        <p>Bad response</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               )}
             </div>

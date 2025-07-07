@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes"
 import { ResizeHandle } from "@/components/resize-handle"
 import { useResizablePanel } from "@/hooks/use-resizable-panel"
 import { ChevronRight } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // Shared type for chat messages
 export type Message = {
@@ -148,110 +149,118 @@ export default function DataCleaningWorkstation() {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div className="flex flex-col h-screen bg-background text-foreground font-sans">
-        <WorkstationHeader
-          onToggleLeftSidebar={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
-          onToggleRightSidebar={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
-          onSendMessage={handleSendMessage}
-        />
-        <div className="flex flex-grow overflow-hidden relative">
-          {/* Left Sidebar Container */}
-          <div className="hidden lg:flex h-full" onMouseLeave={handleMouseLeaveSidebarArea}>
-            <div
-              className="transition-all duration-300 ease-in-out flex-shrink-0 h-full"
-              style={{ width: isLeftSidebarCollapsed ? 0 : leftSidebarWidth, overflow: "hidden" }}
-              onMouseEnter={handleMouseEnterSidebarArea}
-            >
-              <LeftSidebar
-                isCollapsed={isLeftSidebarCollapsed}
-                onToggleCollapse={handleUnpinSidebar}
-                style={{ width: leftSidebarWidth }}
-              />
-            </div>
-            {!isLeftSidebarCollapsed && <ResizeHandle onMouseDown={handleLeftResize} />}
-          </div>
-
-          {/* Sidebar hover trigger area */}
-          {isLeftSidebarCollapsed && (
-            <>
+      <TooltipProvider delayDuration={100}>
+        <div className="flex flex-col h-screen bg-background text-foreground font-sans">
+          <WorkstationHeader
+            onToggleLeftSidebar={() => setIsLeftSidebarOpen(!isLeftSidebarOpen)}
+            onToggleRightSidebar={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+            onSendMessage={handleSendMessage}
+          />
+          <div className="flex flex-grow overflow-hidden relative">
+            {/* Left Sidebar Container */}
+            <div className="hidden lg:flex h-full" onMouseLeave={handleMouseLeaveSidebarArea}>
               <div
+                className="transition-all duration-300 ease-in-out flex-shrink-0 h-full"
+                style={{ width: isLeftSidebarCollapsed ? 0 : leftSidebarWidth, overflow: "hidden" }}
                 onMouseEnter={handleMouseEnterSidebarArea}
-                className="hidden lg:block fixed left-0 top-0 h-full w-3 z-30"
-              />
-              <button
-                onClick={handlePinSidebar}
-                className="fixed z-20 left-2 top-1/2 -translate-y-1/2 bg-card border p-1 rounded-md shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
-                title="Expand and pin sidebar"
               >
-                <ChevronRight size={16} />
-              </button>
-            </>
-          )}
+                <LeftSidebar
+                  isCollapsed={isLeftSidebarCollapsed}
+                  onToggleCollapse={handleUnpinSidebar}
+                  style={{ width: leftSidebarWidth }}
+                />
+              </div>
+              {!isLeftSidebarCollapsed && <ResizeHandle onMouseDown={handleLeftResize} />}
+            </div>
 
-          {/* Chat Panel on Left */}
-          {chatPanelSide === "left" && (
-            <div className="hidden xl:flex h-full">
+            {/* Sidebar hover trigger area */}
+            {isLeftSidebarCollapsed && (
+              <>
+                <div
+                  onMouseEnter={handleMouseEnterSidebarArea}
+                  className="hidden lg:block fixed left-0 top-0 h-full w-3 z-30"
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handlePinSidebar}
+                      className="fixed z-20 left-2 top-1/2 -translate-y-1/2 bg-card border p-1 rounded-md shadow-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="text-xs px-2 py-1">
+                    <p>Expand and pin sidebar</p>
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
+
+            {/* Chat Panel on Left */}
+            {chatPanelSide === "left" && (
+              <div className="hidden xl:flex h-full">
+                <ChatPanel
+                  side="left"
+                  onToggleSide={() => setChatPanelSide("right")}
+                  style={{ width: `${chatPanelWidth}px` }}
+                  messages={messages}
+                  isThinking={isThinking}
+                  onSendMessage={handleSendMessage}
+                />
+                <ResizeHandle onMouseDown={handleChatResize} />
+              </div>
+            )}
+
+            {/* Main Content */}
+            <MainPanel />
+
+            {/* Chat Panel on Right */}
+            {chatPanelSide === "right" && (
+              <div className="hidden xl:flex h-full">
+                <ResizeHandle onMouseDown={handleChatResize} />
+                <ChatPanel
+                  side="right"
+                  onToggleSide={() => setChatPanelSide("left")}
+                  style={{ width: `${chatPanelWidth}px` }}
+                  messages={messages}
+                  isThinking={isThinking}
+                  onSendMessage={handleSendMessage}
+                />
+              </div>
+            )}
+
+            {/* Mobile Drawers */}
+            {isLeftSidebarOpen && (
+              <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setIsLeftSidebarOpen(false)} />
+            )}
+            <div
+              className={`fixed inset-y-0 left-0 z-50 transition-transform transform lg:hidden ${
+                isLeftSidebarOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
+            >
+              <LeftSidebar isCollapsed={false} onClose={() => setIsLeftSidebarOpen(false)} />
+            </div>
+
+            {isRightSidebarOpen && (
+              <div className="fixed inset-0 bg-black/60 z-40 xl:hidden" onClick={() => setIsRightSidebarOpen(false)} />
+            )}
+            <div
+              className={`fixed inset-y-0 right-0 z-50 transition-transform transform xl:hidden ${
+                isRightSidebarOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
               <ChatPanel
-                side="left"
-                onToggleSide={() => setChatPanelSide("right")}
-                style={{ width: `${chatPanelWidth}px` }}
+                side={chatPanelSide}
+                onToggleSide={() => setChatPanelSide(chatPanelSide === "left" ? "right" : "left")}
+                onClose={() => setIsRightSidebarOpen(false)}
                 messages={messages}
                 isThinking={isThinking}
                 onSendMessage={handleSendMessage}
               />
-              <ResizeHandle onMouseDown={handleChatResize} />
             </div>
-          )}
-
-          {/* Main Content */}
-          <MainPanel />
-
-          {/* Chat Panel on Right */}
-          {chatPanelSide === "right" && (
-            <div className="hidden xl:flex h-full">
-              <ResizeHandle onMouseDown={handleChatResize} />
-              <ChatPanel
-                side="right"
-                onToggleSide={() => setChatPanelSide("left")}
-                style={{ width: `${chatPanelWidth}px` }}
-                messages={messages}
-                isThinking={isThinking}
-                onSendMessage={handleSendMessage}
-              />
-            </div>
-          )}
-
-          {/* Mobile Drawers */}
-          {isLeftSidebarOpen && (
-            <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setIsLeftSidebarOpen(false)} />
-          )}
-          <div
-            className={`fixed inset-y-0 left-0 z-50 transition-transform transform lg:hidden ${
-              isLeftSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
-          >
-            <LeftSidebar isCollapsed={false} onClose={() => setIsLeftSidebarOpen(false)} />
-          </div>
-
-          {isRightSidebarOpen && (
-            <div className="fixed inset-0 bg-black/60 z-40 xl:hidden" onClick={() => setIsRightSidebarOpen(false)} />
-          )}
-          <div
-            className={`fixed inset-y-0 right-0 z-50 transition-transform transform xl:hidden ${
-              isRightSidebarOpen ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <ChatPanel
-              side={chatPanelSide}
-              onToggleSide={() => setChatPanelSide(chatPanelSide === "left" ? "right" : "left")}
-              onClose={() => setIsRightSidebarOpen(false)}
-              messages={messages}
-              isThinking={isThinking}
-              onSendMessage={handleSendMessage}
-            />
           </div>
         </div>
-      </div>
+      </TooltipProvider>
     </ThemeProvider>
   )
 }

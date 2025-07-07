@@ -3,6 +3,7 @@ import type React from "react"
 import { useState } from "react"
 import { ChevronRight, Edit, Copy, Play, Check } from "lucide-react"
 import { queryHistory } from "@/lib/data"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 // A smaller, more compact SQL syntax highlighter for the history popover
 const MiniSQLSyntaxHighlight = ({ code }: { code: string }) => {
@@ -67,27 +68,47 @@ const QueryHistoryItem = ({
           </div>
         </div>
         <div className="flex items-center gap-0.5 ml-2 flex-shrink-0">
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
-            title="Edit in chat"
-          >
-            <Edit size={14} />
-          </button>
-          <button
-            onClick={handleCopy}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
-            title="Copy SQL"
-          >
-            {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-          </button>
-          <button
-            onClick={handleRerun}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
-            title="Rerun prompt"
-          >
-            <Play size={14} />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
+                >
+                  <Edit size={14} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>Edit in chat</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
+                >
+                  {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>Copy SQL</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleRerun}
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background/50"
+                >
+                  <Play size={14} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-xs px-2 py-1">
+                <p>Rerun prompt</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96" : "max-h-0"}`}>
