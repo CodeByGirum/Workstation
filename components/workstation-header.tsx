@@ -4,7 +4,7 @@ import { History, User, Moon, Sun, PanelLeft, MessageSquare, ChevronRight } from
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { Dialog } from "@/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { QueryHistory } from "./query-history"
 import { SettingsPage } from "./settings-page"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
@@ -105,9 +105,11 @@ export function WorkstationHeader({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="hidden sm:block p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground">
-                  <User size={18} />
-                </button>
+                <DialogTrigger asChild>
+                  <button className="hidden sm:block p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground">
+                    <User size={18} />
+                  </button>
+                </DialogTrigger>
               </TooltipTrigger>
               <TooltipContent className="text-xs px-2 py-1">
                 <p>User profile & settings</p>
