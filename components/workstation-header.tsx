@@ -1,12 +1,12 @@
 "use client"
 
+import Link from "next/link"
 import { History, User, Moon, Sun, PanelLeft, MessageSquare, ChevronRight } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import { QueryHistory } from "./query-history"
-import { SettingsPage } from "./settings-page"
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 
 const ThemeToggle = () => {
@@ -101,23 +101,20 @@ export function WorkstationHeader({
           </PopoverContent>
         </Popover>
         <ThemeToggle />
-        <Dialog>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <DialogTrigger asChild>
-                  <button className="hidden sm:block p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground">
-                    <User size={18} />
-                  </button>
-                </DialogTrigger>
-              </TooltipTrigger>
-              <TooltipContent className="text-xs px-2 py-1">
-                <p>User profile & settings</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <SettingsPage />
-        </Dialog>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button asChild variant="ghost" className="hidden sm:block p-1.5 rounded-md">
+                <Link href="/settings">
+                  <User size={18} />
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-xs px-2 py-1">
+              <p>User profile & settings</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
